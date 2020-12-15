@@ -1,4 +1,4 @@
-use std::env;
+use std::{env, println};
 
 fn getIgnore() -> Vec<String> {
     use std::fs;
@@ -33,20 +33,17 @@ fn listFiles(dir: &str) -> std::io::Result<()> {
             },
             Some(i) => i
         };
-
         if _dir.file_type().unwrap().is_dir() {
-            if _dir.file_name().to_str().unwrap() == ".git" {
-                continue;
-            }
-            match getIgnore().iter().find(|x| x.as_str() == _dir.file_name().to_str().unwrap()) {
-                None => {continue;},
+            match getIgnore().iter().find(|x| x == &&format!("{}/",_dir.file_name().into_string().unwrap())) {
+                None => {
+                    if _dir.file_name().into_string().unwrap() != ".git" {
+                        println!("{}/", _dir.file_name().into_string().unwrap());
+                    }
+                },
                 Some(_) => {}
             }
-            println!("{}", _dir.file_name().into_string().unwrap());
-            listFiles(_dir.file_name().into_string().unwrap().as_str())?;
-        }
-        else {
-            println!("  {}", _dir.file_name().into_string().unwrap())
+        } else {
+            println!("{}",_dir.file_name().into_string().unwrap());
         }
     }
     Ok(())
