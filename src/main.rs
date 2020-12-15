@@ -97,9 +97,13 @@ fn main() {
                         res += &format!("{}", i);
                     }
                     if lines.len() != 0 {
-                      if lines.iter().find(|&&v| v.as_str()== "// TODO") {
-                        println!("{} :{}", name, lno);
-                      }
+                        let mut l = 1;
+                        lines.iter().for_each(|line| {
+                            if line.as_str() == "// TODO" {
+                                println!("{} :{}", name, l);
+                            }
+                            l += 1;
+                        });
                     }
                 }
             }
