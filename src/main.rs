@@ -65,12 +65,16 @@ fn main() {
     println!("TODO!\n");
     let argv: Vec<String> = env::args().collect::<Vec<String>>();
 
+    if argv.len() == 0 {
+      show_help();
+    }
+
     match argv[1].as_str() {
-        "@for" => {
-            if argv.len() == 3 {
-                let user = argv[2].as_str();
-                let mut filelist = vec![];
-                list_files(".", &mut filelist).unwrap();
+        "@" => {
+          let mut filelist = vec![];
+          let folder = if argv.len() == 3 { argv[2].as_str() } else { "." };
+
+          list_files(folder, &mut filelist).unwrap();
 
                 for file in filelist {
                     let name = file.as_str();
@@ -81,11 +85,11 @@ fn main() {
                         .collect::<Vec<char>>();
                     let mut res = String::new();
                     let mut lines: Vec<String> = vec![];
-                    let mut lno = 1;
+                    
                     for i in f {
                         if i == '\n' {
                             lines.push(res);
-                            lno += 1;
+                            
                             res = String::new();
                             continue;
                         }
@@ -106,7 +110,6 @@ fn main() {
                         });
                     }
                 }
-            }
         }
         _ => {}
     }
