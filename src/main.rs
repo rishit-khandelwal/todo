@@ -1,6 +1,6 @@
-use std::{env, println};
-use std::fs;
 use rainbow_text::Rainbow;
+use std::fs;
+use std::{env, println};
 mod commands;
 
 fn get_ignores() -> Vec<String> {
@@ -69,65 +69,87 @@ fn main() {
     let argv: Vec<String> = env::args().collect::<Vec<String>>();
 
     if argv.len() == 1 {
-      commands::show_help();
-      return;
+        commands::show_help();
+        return;
     }
 
     match argv[1].as_str() {
         "@" => {
-          let mut filelist = vec![];
-          let folder = if argv.len() == 3 { argv[2].as_str() } else { "." };
+            let mut filelist = vec![];
+            let folder = if argv.len() == 3 {
+                argv[2].as_str()
+            } else {
+                "."
+            };
 
-          list_files(folder, &mut filelist).unwrap();
+            list_files(folder, &mut filelist).unwrap();
 
-                for file in filelist {
-                    let name = file.as_str();
-                    let f = fs::read(name)
-                        .unwrap()
-                        .iter()
-                        .map(|x| *x as char)
-                        .collect::<Vec<char>>();
-                    let mut res = String::new();
-                    let mut lines: Vec<String> = vec![];
-                    
-                    for i in f {
-                        if i == '\n' {
-                            lines.push(res);
-                            
-                            res = String::new();
-                            continue;
-                        }
-                        if (i == ' ' || i == '\t') && res == "" {
-                            continue;
-                        }
+            for file in filelist {
+                let name = file.as_str();
+                let f = fs::read(name)
+                    .unwrap()
+                    .iter()
+                    .map(|x| *x as char)
+                    .collect::<Vec<char>>();
+                let mut res = String::new();
+                let mut lines: Vec<String> = vec![];
 
-                        res += &format!("{}", i);
+                for i in f {
+                    if i == '\n' {
+                        lines.push(res);
+
+                        res = String::new();
+                        continue;
                     }
-                    if lines.len() != 0 {
-                        let mut l = 1;
-                        let mut flag_todo = false;
-                        lines.iter().for_each(|line| {
-                          if flag_todo && line.len() >= 5 {
+                    if (i == ' ' || i == '\t') && res == "" {
+                        continue;
+                    }
+
+                    res += &format!("{}", i);
+                }
+                if lines.len() != 0 {
+                    let mut l = 1;
+                    let mut flag_todo = false;
+                    lines.iter().for_each(|line| {
+                        if flag_todo && line.len() >= 5 {
                             if &(line[0..3]) == "// " {
-                              let assignees = String::from(&(line[3..line.len()]));
+                                let assignees = String::from(&(line[3..line.len()]));
 
-                              let rain = Rainbow::custom(vec![rainbow_text::Color::Green]);
-
-                              Rainbow::custom(vec![rainbow_text::Color::Cyan]).write("Assignees\n");
-                              for a in assignees.split(" ") {
-                                rain.write(format!("  {}\n", a).as_str());
-                              }
+                                let rain = Rainbow::custom(vec![rainbow_text::Color::Green]);
+                                let mut first = true;
+                                Rainbow::custom(vec![rainbow_text::Color::Cyan])
+                                    .write("\nAssignees\n");
+                                for a in assignees.split(" ") {
+                                    if a.chars().nth(0) == Some('@') {
+                                        rain.write(
+                                            format!(
+                                                "{}  {}",
+                                                if !first {
+                                                    "\n"
+                                                } else {
+                                                    first = false;
+                                                    ""
+                                                },
+                                                a
+                                            )
+                                            .as_str(),
+                                        );
+                                    } else {
+                                        print!(" {}", a);
+                                    }
+                                }
                             }
                             flag_todo = false;
-                          }
-                            if line.as_str() == "// TODO" {
-                                Rainbow::custom(vec![rainbow_text::Color::Rgb(255,127,0)]).write(format!("{} :{}\n", name, l).as_str());
-                                flag_todo = true;
-                            }
-                            l += 1;
-                        });
-                    }
+                        }
+                        if line.as_str() == "// TODO" {
+                            Rainbow::custom(vec![rainbow_text::Color::Rgb(255, 127, 0)])
+                                .write(format!("\n{} :{}", name, l).as_str());
+                            flag_todo = true;
+                        }
+                        l += 1;
+                    });
                 }
+            }
         }
         _ => {}
     }
