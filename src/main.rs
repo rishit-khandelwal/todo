@@ -65,8 +65,6 @@ fn list_files(dir: &str, files: &mut Vec<String>) -> std::io::Result<()> {
 // TODO
 // This is a test
 fn main() {
-    println!("TODO!\n");
-    
     let argv: Vec<String> = env::args().collect::<Vec<String>>();
 
     if argv.len() == 1 {

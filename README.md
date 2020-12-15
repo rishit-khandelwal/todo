@@ -9,7 +9,11 @@ $ curl https://raw.githubusercontent.com/rishit-khandelwal/todo/master/install.s
 ```
 
 ## Usage
-- 
+- Help
 ```sh
 $ todo
+```
+- Find
+```sh
+$ todo @ <dir>
 ```
