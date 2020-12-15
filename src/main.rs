@@ -83,11 +83,6 @@ fn main() {
                     let mut lines: Vec<String> = vec![];
                     let mut lno = 1;
                     for i in f {
-                      if lines.len() != 0 {
-                        if lines.index(lno-2) == "// TODO" {
-                          println!("{} :{}", name, lno);
-                        }
-                      }
                         if i == '\n' {
                             lines.push(res);
                             lno += 1;
@@ -100,6 +95,11 @@ fn main() {
                         // TODO
 
                         res += &format!("{}", i);
+                    }
+                    if lines.len() != 0 {
+                      if lines.iter().find(|&&v| v.as_str()== "// TODO") {
+                        println!("{} :{}", name, lno);
+                      }
                     }
                 }
             }
