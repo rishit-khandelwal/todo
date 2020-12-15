@@ -1,5 +1,6 @@
 use std::{env, println};
 use std::fs;
+use rainbow_text::Rainbow;
 mod commands;
 
 fn get_ignores() -> Vec<String> {
@@ -63,7 +64,7 @@ fn list_files(dir: &str, files: &mut Vec<String>) -> std::io::Result<()> {
 }
 
 // TODO
-// This is a test
+// @rishit-khandelwal @someoneelse
 fn main() {
     let argv: Vec<String> = env::args().collect::<Vec<String>>();
 
@@ -104,9 +105,24 @@ fn main() {
                     }
                     if lines.len() != 0 {
                         let mut l = 1;
+                        let mut flag_todo = false;
                         lines.iter().for_each(|line| {
+                          if flag_todo && line.len() >= 5 {
+                            if &(line[0..3]) == "// " {
+                              let assignees = String::from(&(line[3..line.len()]));
+
+                              let rain = Rainbow::custom(vec![rainbow_text::Color::Green]);
+
+                              Rainbow::custom(vec![rainbow_text::Color::Cyan]).write("Assignees\n");
+                              for a in assignees.split(" ") {
+                                rain.write(format!("  {}\n", a).as_str());
+                              }
+                            }
+                            flag_todo = false;
+                          }
                             if line.as_str() == "// TODO" {
-                                println!("{} :{}", name, l);
+                                Rainbow::custom(vec![rainbow_text::Color::Rgb(255,127,0)]).write(format!("{} :{}\n", name, l).as_str());
+                                flag_todo = true;
                             }
                             l += 1;
                         });
