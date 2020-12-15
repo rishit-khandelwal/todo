@@ -1,5 +1,6 @@
 use std::{env, println};
-use std::{fs, ops::Index};
+use std::fs;
+mod commands;
 
 fn get_ignores() -> Vec<String> {
     let content: Vec<char> = fs::read(".gitignore")
@@ -61,12 +62,16 @@ fn list_files(dir: &str, files: &mut Vec<String>) -> std::io::Result<()> {
     Ok(())
 }
 
+// TODO
+// This is a test
 fn main() {
     println!("TODO!\n");
+    
     let argv: Vec<String> = env::args().collect::<Vec<String>>();
 
-    if argv.len() == 0 {
-      show_help();
+    if argv.len() == 1 {
+      commands::show_help();
+      return;
     }
 
     match argv[1].as_str() {
@@ -96,7 +101,6 @@ fn main() {
                         if (i == ' ' || i == '\t') && res == "" {
                             continue;
                         }
-                        // TODO
 
                         res += &format!("{}", i);
                     }
